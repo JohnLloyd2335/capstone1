@@ -1740,12 +1740,12 @@ elseif(isset($_POST['edit_third_dose'])){
   }
 }
 
-if(isset($_POST['send_sms'])){
-  $email="johnlloydlacadin42301@gmail.com";
+if(isset($_POST['send_sms_second_dose'])){
+  $email="jomariborje0@gmail.com";
   $number = $_POST['contact_no'];
   $enteredMsg =  $_POST['message'];
-  $api = "TR-JOHNL798144_SAW9J";
-  $apiPassword = "jl04232001";
+  $api = "TR-JOMAR362845_VB7S4";
+  $apiPassword = "jomari123";
   $msg = $enteredMsg;
 
   $result = itexmo($email,$apiPassword,$number,$msg,$api);
@@ -1754,6 +1754,24 @@ if(isset($_POST['send_sms'])){
   }
   else{
     alert("Message not Sent","nurse/second_dose.php");
+  }
+
+}
+
+if(isset($_POST['send_sms_third_dose'])){
+  $email="jomariborje0@gmail.com";
+  $number = $_POST['contact_no'];
+  $enteredMsg =  $_POST['message'];
+  $api = "TR-JOMAR362845_VB7S4";
+  $apiPassword = "jomari123";
+  $msg = $enteredMsg;
+
+  $result = itexmo($email,$apiPassword,$number,$msg,$api);
+  if ($result){
+    alert("Message Sent","nurse/third_dose.php");
+  }
+  else{
+    alert("Message not Sent","nurse/third_dose.php");
   }
 
 }

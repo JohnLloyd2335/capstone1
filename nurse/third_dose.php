@@ -967,7 +967,7 @@ $activeUserCategory = $array['activeUserCategory'];
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="submit" name="send_sms" class="btn btn-primary">Send</button>
+                <button type="submit" name="send_sms_third_dose" class="btn btn-primary">Send</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </form>
             </div>
