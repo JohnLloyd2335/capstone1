@@ -77,7 +77,7 @@ $activeUserCategory = $array['activeUserCategory'];
         <button class="dropdown-btn">
           <i class="fa fa-shield"></i>
           <span class="links_name">Immunization</span>
-          <i class="fa fa-caret-down ml-4"></i>
+          <i class="fas fa-caret-down ml-3"></i>
         </button>
 
 
@@ -104,6 +104,23 @@ $activeUserCategory = $array['activeUserCategory'];
           </a>
         </div>
 
+        <button class="dropdown-btn">
+          <i class="fas fa-calendar-alt"></i>
+          <span class="links_name mr-4">Doses</span>
+          <i class="fa fa-caret-down ml-5"></i>
+        </button>
+
+
+        <div class="dropdown-container">
+          <a href="second_dose.php">
+            <i class="far fa-calendar-plus"></i>
+            <span class="links_name">Second Dose</span>
+          </a>
+          <a href="third_dose.php">
+            <i class="far fa-calendar-plus"></i>
+            <span class="links_name">Third Dose</span>
+          </a>
+        </div>
 
         <li>
           <a href="archive.php">
@@ -198,10 +215,44 @@ $activeUserCategory = $array['activeUserCategory'];
         <input type="text" placeholder="Search...">
         <i class='bx bx-search' ></i>
       </div> -->
-      <div class="profile-details d-flex justify-content-end pr-5">
+      <div class="profile-details d-flex justify-content-between  px-5" style="cursor: pointer;">
         <!-- <img src="images/profile.jpg" alt="">
         <span class="admin_name"><?php  ?></span>
         <i class='bx bx-chevron-down' ></i> -->
+        <div class="dropdown">
+        <?php 
+        date_default_timezone_set('Asia/Manila');
+        $month_now = date("m");
+        $selectExpiration =$sqlConn->query("SELECT * FROM vaccine WHERE MONTH(expiration_date)=$month_now ORDER BY expiration_date ASC");
+        if($selectExpiration->num_rows > 0){
+          $notification_class = "fas fa-bell text-danger";
+        }
+        else{
+          $notification_class = "fas fa-bell text-dark";
+        }
+        ?>
+        <i class="<?php echo $notification_class; ?>"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <?php 
+          date_default_timezone_set('Asia/Manila');
+          $month_now = date("m");
+          $selectExpiration =$sqlConn->query("SELECT * FROM vaccine WHERE MONTH(expiration_date)=$month_now ORDER BY expiration_date ASC");
+          while($row = $selectExpiration->fetch_assoc()):?>
+            <a class="text-light font-weight-bold h6 dropdown-item bg bg-primary" href="vaccine.php">
+              <?php echo $row['vaccine_name']; ?>
+              <p class="text-danger font-weight-bold">
+                <?php 
+                $expiration_date = $row['expiration_date'];
+                $date = date('F-d-Y',strtotime($expiration_date));
+                echo "Expiration date: ".$date; 
+                ?>
+              </p>
+          </a>
+          <?php endwhile;?>
+        </div>
+      </div>      
+
+
         <div class="dropdown">
           <?php 
           if(empty($activeUserImg)){
@@ -211,13 +262,13 @@ $activeUserCategory = $array['activeUserCategory'];
             $activeUserImg = "../user_profile_img/". $activeUserImg;
           }
           ?>
-          <img src="<?php echo $activeUserImg; ?>"  class="dropdown-toggle border border-info rounded-circle border-5" alt="" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;" height="50" width="50">
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="profile.php">Profile</a>
-            <form action="../crud.php" method="POST">
-              <button type="submit" name="nurse_log_out" class="dropdown-item" href="#" style="cursor: pointer; border:none; outline: nonel">Logout</button>
-            </form>
-          </div>
+          <img src="<?php echo $activeUserImg; ?>"  class="dropdown-toggle border border-info rounded-circle border-5 " alt="" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;">
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="profile.php">Profile</a>
+          <form action="../crud.php" method="POST">
+            <button type="submit" name="nurse_log_out" class="dropdown-item" href="#" style="cursor: pointer; border:none; outline: none;">Logout</button>
+          </form>
+        </div>
       </div>
       </div>
     </nav>
@@ -797,7 +848,9 @@ $activeUserCategory = $array['activeUserCategory'];
                         <input type="hidden" name="doses" value="<?php echo $row['doses'] ?>" class="form-control" readonly>
                       
                         <input type="hidden" name="doses_received" value="<?php echo $row['doses_received'] ?>" class="form-control" readonly>
-                        
+                        <input type="hidden" name="first_dose_schedule" value ="<?php echo $row['first_dose_schedule']; ?>">
+                        <input type="hidden" name="second_dose_schedule" value ="<?php echo $row['second_dose_schedule']; ?>">
+                        <input type="hidden" name="third_dose_schedule" value ="<?php echo $row['third_dose_schedule']; ?>">
 
                       
                         <input type="hidden"name="remarks" class="form-control" value="<?php echo $row['remarks']; ?>">
@@ -1054,13 +1107,13 @@ $activeUserCategory = $array['activeUserCategory'];
                             <option value="1">1</option>
                           <?php 
                           elseif($row['doses'] == 2):?>
-                            <option value="2">2</option>
+                            <option value="1">1</option>
+                            <option selected value="2">2</option>
                           <?php elseif($row['doses'] == 3):
                             if($row['doses_received'] == 2):?>
                               <option selected value="2">2</option>
                               <option value="3">3</option>
                               <?php else:?>
-                                <option value="2">2</option>
                                 <option selected value="3">3</option>
                           <?php endif; endif; ?>
                           

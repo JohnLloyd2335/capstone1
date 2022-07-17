@@ -19,9 +19,13 @@ if(isset($_POST['add_nurse_user'])){
   $gender = $_POST['gender'];
   $user_type = $_POST['user_category'];
   $user_name = $_POST['user_name'];
-  $password = $_POST['password'];
-  $password = password_hash($password,PASSWORD_DEFAULT);
+  $passwordUnhashed = $_POST['password'];
+  $confirm_password = $_POST['confirm_password'];
+  $password = password_hash($passwordUnhashed,PASSWORD_DEFAULT);
 
+  if($passwordUnhashed != $confirm_password){
+    alert("Password is not matched","admin/manage_user.php");
+  }else{
   $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name';";
   $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
   $rows = mysqli_num_rows($checkIfExisitingUserRun);
@@ -30,46 +34,49 @@ if(isset($_POST['add_nurse_user'])){
     alert("User Already Exist!","admin/manage_user.php");
   }
   else{
-    $fileExt = explode('.', $fileName);
-    $fileActualExt = strtolower(end($fileExt));
+      $fileExt = explode('.', $fileName);
+      $fileActualExt = strtolower(end($fileExt));
 
-    $allowed = array('jpg', 'jpeg', 'png');
+      $allowed = array('jpg', 'jpeg', 'png');
 
-    if (in_array($fileActualExt, $allowed)) {
+      if (in_array($fileActualExt, $allowed)) {
 
-      if($fileError === 0) {
-        if($fileSize < 100000000) {
-          $fileNameNew = uniqid('', true).".".$fileActualExt;
-          $fileDestination = 'user_profile_img/'.$fileNameNew;
-          move_uploaded_file($fileTmpName, $fileDestination);
+        if($fileError === 0) {
+          if($fileSize < 100000000) {
+            $fileNameNew = uniqid('', true).".".$fileActualExt;
+            $fileDestination = 'user_profile_img/'.$fileNameNew;
+            move_uploaded_file($fileTmpName, $fileDestination);
 
-          $insertUserRun = mysqli_query($sqlConn, "INSERT INTO users (first_name,middle_name,last_name,dob,age,gender, user_name,password, profile_img) VALUES('$first_name','$middle_name','$last_name','$dob','$age','$gender','$user_name','$password','$fileNameNew')");
-          if($insertUserRun){
-            $selectLastRow = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
-            $runQuery = mysqli_query($sqlConn,$selectLastRow);
-            $lastRow = mysqli_fetch_assoc($runQuery);
-            $lastRow = $lastRow['user_id'];
-            $insertUserType = mysqli_query($sqlConn,"INSERT INTO user_category(user_id,user_type) VALUES ('$lastRow','$user_type')");
-            if($insertUserType){
-              alert("User Added","admin/manage_user.php");
+            $insertUserRun = mysqli_query($sqlConn, "INSERT INTO users (first_name,middle_name,last_name,dob,age,gender, user_name,password, profile_img) VALUES('$first_name','$middle_name','$last_name','$dob','$age','$gender','$user_name','$password','$fileNameNew')");
+            if($insertUserRun){
+              $selectLastRow = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
+              $runQuery = mysqli_query($sqlConn,$selectLastRow);
+              $lastRow = mysqli_fetch_assoc($runQuery);
+              $lastRow = $lastRow['user_id'];
+              $insertUserType = mysqli_query($sqlConn,"INSERT INTO user_category(user_id,user_type) VALUES ('$lastRow','$user_type')");
+              if($insertUserType){
+                alert("User Added","admin/manage_user.php");
+              }
+              else{
+                alert("There was an error uploading your file","admin/manage_user.php");
+              }
             }
-            else{
-              alert("There was an error uploading your file","admin/manage_user.php");
-            }
+            
+          }else {
+            alert("Your file is too big","admin/manage_user.php");
           }
-          
+
         }else {
-          alert("Your file is too big","admin/manage_user.php");
+          alert("There was an error uploading your file","admin/manage_user.php");
         }
-
       }else {
-        alert("There was an error uploading your file","admin/manage_user.php");
+        alert("File not allowed","admin/manage_user.php");
       }
-    }else {
-      alert("File not allowed","admin/manage_user.php");
-    }
 
+    }
   }
+
+  
 }
 elseif(isset($_POST['delete_nurse_user'])){
   $delete_id = $_POST['delete_user_id'];
@@ -99,6 +106,8 @@ elseif(isset($_POST['edit_nurse_user'])){
   $age = $_POST['age'];
   $gender = $_POST['gender'];
 
+  
+
   $editUserQuery = $sqlConn->query("UPDATE users SET first_name='$first_name', middle_name='$middle_name', last_name='$last_name', dob='$dob', age='$age', gender='$gender' WHERE user_id ='$edit_id';");
 
   if($editUserQuery){
@@ -110,102 +119,223 @@ elseif(isset($_POST['edit_nurse_user'])){
 
 }
 elseif(isset($_POST['edit_profile_admin'])){
-  $profile_id = $_POST['profile_id'];
-  $first_name = $_POST['first_name'];
-  $middle_name = $_POST['middle_name'];
-  $last_name = $_POST['last_name'];
-  $dob = $_POST['dob'];
-  $age = $_POST['age'];
-  $gender = $_POST['gender'];
-  $user_name = $_POST['user_name'];
-  $passwordUnhashed = $_POST['password'];
-  $editedUserName = $user_name;
-  $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
-
-  $file = $_FILES['file'];
+  $correct_password = $_POST['correct_password'];
+  $old_password = $_POST['old_password'];
+  $new_password = $_POST['new_password'];
+  $confirm_password = $_POST['confirm_password'];
 
   
-  $fileName = $_FILES['file']['name'];
-  $fileTmpName = $_FILES['file']['tmp_name'];
-  $fileSize = $_FILES['file']['size'];
-  $fileError = $_FILES['file']['error'];
-  $fileType = $_FILES['file']['type'];
+  if(empty($old_password) || empty($new_password) || empty($confirm_password)){
 
-  
+    $profile_id = $_POST['profile_id'];
+    $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $last_name = $_POST['last_name'];
+    $dob = $_POST['dob'];
+    $age = $_POST['age'];
+    $gender = $_POST['gender'];
+    $user_name = $_POST['user_name'];
+    $editedUserName = $user_name;
 
-  $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
-  $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
-  $rows = mysqli_num_rows($checkIfExisitingUserRun);
+    $file = $_FILES['file'];
 
-  
+    
+    $fileName = $_FILES['file']['name'];
+    $fileTmpName = $_FILES['file']['tmp_name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileError = $_FILES['file']['error'];
+    $fileType = $_FILES['file']['type'];
 
-  if($rows > 0){
-    alert("User Already Exist!","admin/profile.php");
+    
+
+    $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+    $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+    $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+    
+
+    if($rows > 0){
+      alert("User Already Exist!","admin/profile.php");
+    }
+    else{
+      if($fileSize==0){
+        $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name' WHERE user_id='$profile_id'");
+
+        if($editProfile){
+          session_start();
+          $_SESSION["admin-logged-in-user"] = $editedUserName;
+          alert("Profile Successfuly Edited","admin/profile.php");
+        }
+        else{
+          alert("There was an error try again","admin/profile.php");
+        }
+      }else{
+        $fileExt = explode('.', $fileName);
+        $fileActualExt = strtolower(end($fileExt));
+
+        $allowed = array('jpg', 'jpeg', 'png');
+
+        if (in_array($fileActualExt, $allowed)) {
+
+          if ($fileError === 0) {
+            if($fileSize < 100000000) {
+              $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+              $rowImg = $selectUser->fetch_assoc();
+              if(!empty($rowImg['profile_img'])){
+                $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                unlink($deleteImgDestination);
+              }
+              
+              
+
+            
+                $fileNameNew = uniqid('', true).".".$fileActualExt;
+                $fileDestination = 'user_profile_img/'.$fileNameNew;
+                move_uploaded_file($fileTmpName, $fileDestination);
+
+              
+                $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                if($editProfile){
+                  session_start();
+                  $_SESSION["admin-logged-in-user"] = $editedUserName;
+                  $_SESSION["admin-logged-in-password"] = $passwordUnhashed;
+                  alert("Profile Successfuly Edited","admin/profile.php");
+                }
+                else{
+                  alert("There was an error try again","admin/profile.php");
+                }
+              }
+              
+            }else {
+              alert("File is too big","admin/profile.php");
+            }
+
+          }else {
+            alert("There was an error uploading your file","admin/profile.php");
+          }
+        }
+        
+    }
+
   }
   else{
-    if($fileSize==0){
-      $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      if($editProfile){
-        session_start();
-        $_SESSION["admin-logged-in-user"] = $editedUserName;
-        $_SESSION["admin-logged-in-password"] = $passwordUnhashed;
-        alert("Profile Successfuly Edited","admin/profile.php");
+    if($correct_password != $old_password){
+      alert("Old Password is incorrect","admin/profile.php");
+    }elseif($new_password != $confirm_password){
+      alert("New Password and Confirm password is not matched","admin/profile.php");
+    }
+    else{
+      $profile_id = $_POST['profile_id'];
+      $first_name = $_POST['first_name'];
+      $middle_name = $_POST['middle_name'];
+      $last_name = $_POST['last_name'];
+      $dob = $_POST['dob'];
+      $age = $_POST['age'];
+      $gender = $_POST['gender'];
+      $user_name = $_POST['user_name'];
+      $passwordUnhashed = $new_password;
+      $editedUserName = $user_name;
+      $password = password_hash($passwordUnhashed,PASSWORD_DEFAULT);
+
+      $file = $_FILES['file'];
+
+      
+      $fileName = $_FILES['file']['name'];
+      $fileTmpName = $_FILES['file']['tmp_name'];
+      $fileSize = $_FILES['file']['size'];
+      $fileError = $_FILES['file']['error'];
+      $fileType = $_FILES['file']['type'];
+
+      
+
+      $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+      $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+      $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+      
+
+      if($rows > 0){
+        alert("User Already Exist!","admin/profile.php");
       }
       else{
-        alert("There was an error try again","admin/profile.php");
-      }
-    }else{
-      $fileExt = explode('.', $fileName);
-      $fileActualExt = strtolower(end($fileExt));
+        if($fileSize==0){
+          $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      $allowed = array('jpg', 'jpeg', 'png');
-
-      if (in_array($fileActualExt, $allowed)) {
-
-        if ($fileError === 0) {
-          if($fileSize < 100000000) {
-            $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
-            $rowImg = $selectUser->fetch_assoc();
-            if(!empty($rowImg['profile_img'])){
-              $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
-              unlink($deleteImgDestination);
-            }
-            
-            
-
-          
-              $fileNameNew = uniqid('', true).".".$fileActualExt;
-              $fileDestination = 'user_profile_img/'.$fileNameNew;
-              move_uploaded_file($fileTmpName, $fileDestination);
-
-            
-              $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
-
-
-
-              if($editProfile){
-                session_start();
-                $_SESSION["admin-logged-in-user"] = $editedUserName;
-                $_SESSION["admin-logged-in-password"] = $passwordUnhashed;
-                alert("Profile Successfuly Edited","admin/profile.php");
-              }
-              else{
-                alert("There was an error try again","admin/profile.php");
-              }
-            }
-            
-          }else {
-            alert("File is too big","admin/profile.php");
+          if($editProfile){
+            session_start();
+            $_SESSION["admin-logged-in-user"] = $editedUserName;
+            $_SESSION["admin-logged-in-password"] = $passwordUnhashed;
+            alert("Profile Successfuly Edited","admin/profile.php");
           }
+          else{
+            alert("There was an error try again","admin/profile.php");
+          }
+        }else{
+          $fileExt = explode('.', $fileName);
+          $fileActualExt = strtolower(end($fileExt));
 
-        }else {
-          alert("There was an error uploading your file","admin/profile.php");
-        }
+          $allowed = array('jpg', 'jpeg', 'png');
+
+          if (in_array($fileActualExt, $allowed)) {
+
+            if ($fileError === 0) {
+              if($fileSize < 100000000) {
+                $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+                $rowImg = $selectUser->fetch_assoc();
+                if(!empty($rowImg['profile_img'])){
+                  $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                  unlink($deleteImgDestination);
+                }
+                
+                
+
+              
+                  $fileNameNew = uniqid('', true).".".$fileActualExt;
+                  $fileDestination = 'user_profile_img/'.$fileNameNew;
+                  move_uploaded_file($fileTmpName, $fileDestination);
+
+                
+                  $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                  if($editProfile){
+                    session_start();
+                    $_SESSION["admin-logged-in-user"] = $editedUserName;
+                    $_SESSION["admin-logged-in-password"] = $passwordUnhashed;
+                    alert("Profile Successfuly Edited","admin/profile.php");
+                  }
+                  else{
+                    alert("There was an error try again","admin/profile.php");
+                  }
+                }
+                
+              }else {
+                alert("File is too big","admin/profile.php");
+              }
+
+            }else {
+              alert("There was an error uploading your file","admin/profile.php");
+            }
+          }
+          
       }
-      
+    
+    }
+    
+    
+
+
   }
 
+
+  
+
+  
 }
 /* Admin */
 
@@ -227,57 +357,66 @@ if(isset($_POST['add_bhw_user'])){
   $gender = $_POST['gender'];
   $user_type = $_POST['user_category'];
   $user_name = $_POST['user_name'];
-  $password = $_POST['password'];
-  $password = password_hash($password,PASSWORD_DEFAULT);
+  $passwordUnhashed = $_POST['password'];
+  $confirm_password = $_POST['confirm_password'];
+  $password = password_hash($passwordUnhashed,PASSWORD_DEFAULT);
 
-  $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name';";
-  $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
-  $rows = mysqli_num_rows($checkIfExisitingUserRun);
+  if($passwordUnhashed != $confirm_password){
+    alert("Password is not matched","nurse/manage_user.php");
+  }else{
 
-  if($rows > 0){
-    alert("User Already Exist!","nurse/manage_user.php");
-  }
-  else{
-    $fileExt = explode('.', $fileName);
-    $fileActualExt = strtolower(end($fileExt));
+    $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name';";
+    $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+    $rows = mysqli_num_rows($checkIfExisitingUserRun);
 
-    $allowed = array('jpg', 'jpeg', 'png');
+    if($rows > 0){
+      alert("User Already Exist!","nurse/manage_user.php");
+    }
+    else{
+      $fileExt = explode('.', $fileName);
+      $fileActualExt = strtolower(end($fileExt));
 
-    if (in_array($fileActualExt, $allowed)) {
+      $allowed = array('jpg', 'jpeg', 'png');
 
-      if($fileError === 0) {
-        if($fileSize < 100000000) {
-          $fileNameNew = uniqid('', true).".".$fileActualExt;
-          $fileDestination = 'user_profile_img/'.$fileNameNew;
-          move_uploaded_file($fileTmpName, $fileDestination);
+      if (in_array($fileActualExt, $allowed)) {
 
-          $insertUserRun = mysqli_query($sqlConn, "INSERT INTO users (first_name,middle_name,last_name,dob,age,gender, user_name,password, profile_img) VALUES('$first_name','$middle_name','$last_name','$dob','$age','$gender','$user_name','$password','$fileNameNew')");
-          if($insertUserRun){
-            $selectLastRow = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
-            $runQuery = mysqli_query($sqlConn,$selectLastRow);
-            $lastRow = mysqli_fetch_assoc($runQuery);
-            $lastRow = $lastRow['user_id'];
-            $insertUserType = mysqli_query($sqlConn,"INSERT INTO user_category(user_id,user_type) VALUES ('$lastRow','$user_type')");
-            if($insertUserType){
-              alert("User Added","nurse/manage_user.php");
+        if($fileError === 0) {
+          if($fileSize < 100000000) {
+            $fileNameNew = uniqid('', true).".".$fileActualExt;
+            $fileDestination = 'user_profile_img/'.$fileNameNew;
+            move_uploaded_file($fileTmpName, $fileDestination);
+
+            $insertUserRun = mysqli_query($sqlConn, "INSERT INTO users (first_name,middle_name,last_name,dob,age,gender, user_name,password, profile_img) VALUES('$first_name','$middle_name','$last_name','$dob','$age','$gender','$user_name','$password','$fileNameNew')");
+            if($insertUserRun){
+              $selectLastRow = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1;";
+              $runQuery = mysqli_query($sqlConn,$selectLastRow);
+              $lastRow = mysqli_fetch_assoc($runQuery);
+              $lastRow = $lastRow['user_id'];
+              $insertUserType = mysqli_query($sqlConn,"INSERT INTO user_category(user_id,user_type) VALUES ('$lastRow','$user_type')");
+              if($insertUserType){
+                alert("User Added","nurse/manage_user.php");
+              }
+              else{
+                alert("There was an error uploading your file","nurse/manage_user.php");
+              }
             }
-            else{
-              alert("There was an error uploading your file","nurse/manage_user.php");
-            }
+            
+          }else {
+            alert("Your file is too big","nurse/manage_user.php");
           }
-          
-        }else {
-          alert("Your file is too big","nurse/manage_user.php");
-        }
 
+        }else {
+          alert("There was an error uploading your file","nurse/manage_user.php");
+        }
       }else {
-        alert("There was an error uploading your file","nurse/manage_user.php");
+        alert("File not allowed","nurse/manage_user.php");
       }
-    }else {
-      alert("File not allowed","nurse/manage_user.php");
+
     }
 
   }
+
+  
 }
 elseif(isset($_POST['delete_bhw_user'])){
   $delete_id = $_POST['delete_user_id'];
@@ -318,203 +457,444 @@ elseif(isset($_POST['edit_bhw_user'])){
 
 }
 elseif(isset($_POST['edit_profile_nurse'])){
-  $profile_id = $_POST['profile_id'];
-  $first_name = $_POST['first_name'];
-  $middle_name = $_POST['middle_name'];
-  $last_name = $_POST['last_name'];
-  $dob = $_POST['dob'];
-  $age = $_POST['age'];
-  $gender = $_POST['gender'];
-  $user_name = $_POST['user_name'];
-  $passwordUnhashed = $_POST['password'];
-  $editedUserName = $user_name;
-  $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
-
-  $file = $_FILES['file'];
+  $correct_password = $_POST['correct_password'];
+  $old_password = $_POST['old_password'];
+  $new_password = $_POST['new_password'];
+  $confirm_password = $_POST['confirm_password'];
 
   
-  $fileName = $_FILES['file']['name'];
-  $fileTmpName = $_FILES['file']['tmp_name'];
-  $fileSize = $_FILES['file']['size'];
-  $fileError = $_FILES['file']['error'];
-  $fileType = $_FILES['file']['type'];
+  if(empty($old_password) || empty($new_password) || empty($confirm_password)){
 
-  
+    $profile_id = $_POST['profile_id'];
+    $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $last_name = $_POST['last_name'];
+    $dob = $_POST['dob'];
+    $age = $_POST['age'];
+    $gender = $_POST['gender'];
+    $user_name = $_POST['user_name'];
+    $editedUserName = $user_name;
 
-  $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
-  $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
-  $rows = mysqli_num_rows($checkIfExisitingUserRun);
+    $file = $_FILES['file'];
 
-  
+    
+    $fileName = $_FILES['file']['name'];
+    $fileTmpName = $_FILES['file']['tmp_name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileError = $_FILES['file']['error'];
+    $fileType = $_FILES['file']['type'];
 
-  if($rows > 0){
-    alert("User Already Exist!","nurse/profile.php");
+    
+
+    $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+    $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+    $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+    
+
+    if($rows > 0){
+      alert("User Already Exist!","nurse/profile.php");
+    }
+    else{
+      if($fileSize==0){
+        $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name' WHERE user_id='$profile_id'");
+
+        if($editProfile){
+          session_start();
+          $_SESSION["nurse-logged-in-user"] = $editedUserName;
+          alert("Profile Successfuly Edited","nurse/profile.php");
+        }
+        else{
+          alert("There was an error try again","nurse/profile.php");
+        }
+      }else{
+        $fileExt = explode('.', $fileName);
+        $fileActualExt = strtolower(end($fileExt));
+
+        $allowed = array('jpg', 'jpeg', 'png');
+
+        if (in_array($fileActualExt, $allowed)) {
+
+          if ($fileError === 0) {
+            if($fileSize < 100000000) {
+              $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+              $rowImg = $selectUser->fetch_assoc();
+              if(!empty($rowImg['profile_img'])){
+                $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                unlink($deleteImgDestination);
+              }
+              
+              
+
+            
+                $fileNameNew = uniqid('', true).".".$fileActualExt;
+                $fileDestination = 'user_profile_img/'.$fileNameNew;
+                move_uploaded_file($fileTmpName, $fileDestination);
+
+              
+                $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                if($editProfile){
+                  session_start();
+                  $_SESSION["nurse-logged-in-user"] = $editedUserName;
+                  $_SESSION["nurse-logged-in-password"] = $passwordUnhashed;
+                  alert("Profile Successfuly Edited","nurse/profile.php");
+                }
+                else{
+                  alert("There was an error try again","nurse/profile.php");
+                }
+              }
+              
+            }else {
+              alert("File is too big","nurse/profile.php");
+            }
+
+          }else {
+            alert("There was an error uploading your file","nurse/profile.php");
+          }
+        }
+        
+    }
+
   }
   else{
-    if($fileSize==0){
-      $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      if($editProfile){
-        session_start();
-        $_SESSION["nurse-logged-in-user"] = $editedUserName;
-        $_SESSION["nurse-logged-in-password"] = $passwordUnhashed;
-        alert("Profile Successfuly Edited","nurse/profile.php");
+    if($correct_password != $old_password){
+      alert("Old Password is incorrect","nurse/profile.php");
+    }elseif($new_password != $confirm_password){
+      alert("New Password and Confirm password is not matched","nurse/profile.php");
+    }
+    else{
+      $profile_id = $_POST['profile_id'];
+      $first_name = $_POST['first_name'];
+      $middle_name = $_POST['middle_name'];
+      $last_name = $_POST['last_name'];
+      $dob = $_POST['dob'];
+      $age = $_POST['age'];
+      $gender = $_POST['gender'];
+      $user_name = $_POST['user_name'];
+      $passwordUnhashed = $new_password;
+      $editedUserName = $user_name;
+      $password = password_hash($passwordUnhashed,PASSWORD_DEFAULT);
+
+      $file = $_FILES['file'];
+
+      
+      $fileName = $_FILES['file']['name'];
+      $fileTmpName = $_FILES['file']['tmp_name'];
+      $fileSize = $_FILES['file']['size'];
+      $fileError = $_FILES['file']['error'];
+      $fileType = $_FILES['file']['type'];
+
+      
+
+      $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+      $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+      $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+      
+
+      if($rows > 0){
+        alert("User Already Exist!","nurse/profile.php");
       }
       else{
-        alert("There was an error try again","nurse/profile.php");
-      }
-    }else{
-      $fileExt = explode('.', $fileName);
-      $fileActualExt = strtolower(end($fileExt));
+        if($fileSize==0){
+          $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      $allowed = array('jpg', 'jpeg', 'png');
-
-      if (in_array($fileActualExt, $allowed)) {
-
-        if ($fileError === 0) {
-          if($fileSize < 100000000) {
-            $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
-            $rowImg = $selectUser->fetch_assoc();
-            if(!empty($rowImg['profile_img'])){
-              $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
-              unlink($deleteImgDestination);
-            }
-            
-            
-
-          
-              $fileNameNew = uniqid('', true).".".$fileActualExt;
-              $fileDestination = 'user_profile_img/'.$fileNameNew;
-              move_uploaded_file($fileTmpName, $fileDestination);
-
-            
-              $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
-
-
-
-              if($editProfile){
-                session_start();
-                $_SESSION["nurse-logged-in-user"] = $editedUserName;
-                $_SESSION["nurse-logged-in-password"] = $passwordUnhashed;
-                alert("Profile Successfuly Edited","nurse/profile.php");
-              }
-              else{
-                alert("There was an error try again","nurse/profile.php");
-              }
-            }
-            
-          }else {
-            alert("File is too big","nurse/profile.php");
+          if($editProfile){
+            session_start();
+            $_SESSION["nurse-logged-in-user"] = $editedUserName;
+            $_SESSION["nurse-logged-in-password"] = $passwordUnhashed;
+            alert("Profile Successfuly Edited","nurse/profile.php");
           }
+          else{
+            alert("There was an error try again","nurse/profile.php");
+          }
+        }else{
+          $fileExt = explode('.', $fileName);
+          $fileActualExt = strtolower(end($fileExt));
 
-        }else {
-          alert("There was an error uploading your file","nurse/profile.php");
-        }
+          $allowed = array('jpg', 'jpeg', 'png');
+
+          if (in_array($fileActualExt, $allowed)) {
+
+            if ($fileError === 0) {
+              if($fileSize < 100000000) {
+                $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+                $rowImg = $selectUser->fetch_assoc();
+                if(!empty($rowImg['profile_img'])){
+                  $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                  unlink($deleteImgDestination);
+                }
+                
+                
+
+              
+                  $fileNameNew = uniqid('', true).".".$fileActualExt;
+                  $fileDestination = 'user_profile_img/'.$fileNameNew;
+                  move_uploaded_file($fileTmpName, $fileDestination);
+
+                
+                  $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                  if($editProfile){
+                    session_start();
+                    $_SESSION["nurse-logged-in-user"] = $editedUserName;
+                    $_SESSION["nurse-logged-in-password"] = $passwordUnhashed;
+                    alert("Profile Successfuly Edited","nurse/profile.php");
+                  }
+                  else{
+                    alert("There was an error try again","nurse/profile.php");
+                  }
+                }
+                
+              }else {
+                alert("File is too big","nurse/profile.php");
+              }
+
+            }else {
+              alert("There was an error uploading your file","nurse/profile.php");
+            }
+          }
+          
       }
-      
+    
+    }
+    
+    
+
+
   }
+
+
+  
 
 }
 /* Nurse */
 
 /* BHW */
-if(isset($_POST['edit_profile_bhw'])){
-  $profile_id = $_POST['profile_id'];
-  $first_name = $_POST['first_name'];
-  $middle_name = $_POST['middle_name'];
-  $last_name = $_POST['last_name'];
-  $dob = $_POST['dob'];
-  $age = $_POST['age'];
-  $gender = $_POST['gender'];
-  $user_name = $_POST['user_name'];
-  $passwordUnhashed = $_POST['password'];
-  $editedUserName = $user_name;
-  $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
-
-  $file = $_FILES['file'];
+elseif(isset($_POST['edit_profile_bhw'])){
+  $correct_password = $_POST['correct_password'];
+  $old_password = $_POST['old_password'];
+  $new_password = $_POST['new_password'];
+  $confirm_password = $_POST['confirm_password'];
 
   
-  $fileName = $_FILES['file']['name'];
-  $fileTmpName = $_FILES['file']['tmp_name'];
-  $fileSize = $_FILES['file']['size'];
-  $fileError = $_FILES['file']['error'];
-  $fileType = $_FILES['file']['type'];
+  if(empty($old_password) || empty($new_password) || empty($confirm_password)){
 
-  
+    $profile_id = $_POST['profile_id'];
+    $first_name = $_POST['first_name'];
+    $middle_name = $_POST['middle_name'];
+    $last_name = $_POST['last_name'];
+    $dob = $_POST['dob'];
+    $age = $_POST['age'];
+    $gender = $_POST['gender'];
+    $user_name = $_POST['user_name'];
+    $editedUserName = $user_name;
 
-  $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
-  $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
-  $rows = mysqli_num_rows($checkIfExisitingUserRun);
+    $file = $_FILES['file'];
 
-  
+    
+    $fileName = $_FILES['file']['name'];
+    $fileTmpName = $_FILES['file']['tmp_name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileError = $_FILES['file']['error'];
+    $fileType = $_FILES['file']['type'];
 
-  if($rows > 0){
-    alert("User Already Exist!","barangay health worker/profile.php");
+    
+
+    $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+    $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+    $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+    
+
+    if($rows > 0){
+      alert("User Already Exist!","barangay health worker/profile.php");
+    }
+    else{
+      if($fileSize==0){
+        $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name' WHERE user_id='$profile_id'");
+
+        if($editProfile){
+          session_start();
+          $_SESSION["bhw-logged-in-user"] = $editedUserName;
+          alert("Profile Successfuly Edited","barangay health worker/profile.php");
+        }
+        else{
+          alert("There was an error try again","barangay health worker/profile.php");
+        }
+      }else{
+        $fileExt = explode('.', $fileName);
+        $fileActualExt = strtolower(end($fileExt));
+
+        $allowed = array('jpg', 'jpeg', 'png');
+
+        if (in_array($fileActualExt, $allowed)) {
+
+          if ($fileError === 0) {
+            if($fileSize < 100000000) {
+              $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+              $rowImg = $selectUser->fetch_assoc();
+              if(!empty($rowImg['profile_img'])){
+                $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                unlink($deleteImgDestination);
+              }
+              
+              
+
+            
+                $fileNameNew = uniqid('', true).".".$fileActualExt;
+                $fileDestination = 'user_profile_img/'.$fileNameNew;
+                move_uploaded_file($fileTmpName, $fileDestination);
+
+              
+                $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                if($editProfile){
+                  session_start();
+                  $_SESSION["bhw-logged-in-user"] = $editedUserName;
+                  $_SESSION["bhw-logged-in-password"] = $passwordUnhashed;
+                  alert("Profile Successfuly Edited","barangay health worker/profile.php");
+                }
+                else{
+                  alert("There was an error try again","barangay health worker/profile.php");
+                }
+              }
+              
+            }else {
+              alert("File is too big","barangay health worker/profile.php");
+            }
+
+          }else {
+            alert("There was an error uploading your file","barangay health worker/profile.php");
+          }
+        }
+        
+    }
+
   }
   else{
-    if($fileSize==0){
-      $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      if($editProfile){
-        session_start();
-        $_SESSION["health-worker-logged-in-user"] = $editedUserName;
-        $_SESSION["health-worker-logged-in-password"] = $passwordUnhashed;
-        alert("Profile Successfuly Edited","barangay health worker/profile.php");
+    if($correct_password != $old_password){
+      alert("Old Password is incorrect","barangay health worker/profile.php");
+    }elseif($new_password != $confirm_password){
+      alert("New Password and Confirm password is not matched","barangay health worker/profile.php");
+    }
+    else{
+      $profile_id = $_POST['profile_id'];
+      $first_name = $_POST['first_name'];
+      $middle_name = $_POST['middle_name'];
+      $last_name = $_POST['last_name'];
+      $dob = $_POST['dob'];
+      $age = $_POST['age'];
+      $gender = $_POST['gender'];
+      $user_name = $_POST['user_name'];
+      $passwordUnhashed = $new_password;
+      $editedUserName = $user_name;
+      $password = password_hash($passwordUnhashed,PASSWORD_DEFAULT);
+
+      $file = $_FILES['file'];
+
+      
+      $fileName = $_FILES['file']['name'];
+      $fileTmpName = $_FILES['file']['tmp_name'];
+      $fileSize = $_FILES['file']['size'];
+      $fileError = $_FILES['file']['error'];
+      $fileType = $_FILES['file']['type'];
+
+      
+
+      $checkIfExisitingUser = "SELECT * FROM users WHERE user_name='$user_name' AND user_id!='$profile_id';";
+      $checkIfExisitingUserRun = mysqli_query($sqlConn,$checkIfExisitingUser);
+      $rows = mysqli_num_rows($checkIfExisitingUserRun);
+
+      
+
+      if($rows > 0){
+        alert("User Already Exist!","barangay health worker/profile.php");
       }
       else{
-        alert("There was an error try again","barangay health worker/profile.php");
-      }
-    }else{
-      $fileExt = explode('.', $fileName);
-      $fileActualExt = strtolower(end($fileExt));
+        if($fileSize==0){
+          $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password' WHERE user_id='$profile_id'");
 
-      $allowed = array('jpg', 'jpeg', 'png');
-
-      if (in_array($fileActualExt, $allowed)) {
-
-        if ($fileError === 0) {
-          if($fileSize < 100000000) {
-            $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
-            $rowImg = $selectUser->fetch_assoc();
-            if(!empty($rowImg['profile_img'])){
-              $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
-              unlink($deleteImgDestination);
-            }
-            
-            
-
-          
-              $fileNameNew = uniqid('', true).".".$fileActualExt;
-              $fileDestination = 'user_profile_img/'.$fileNameNew;
-              move_uploaded_file($fileTmpName, $fileDestination);
-
-            
-              $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
-
-
-
-              if($editProfile){
-                session_start();
-                $_SESSION["health-worker-logged-in-user"] = $editedUserName;
-                $_SESSION["health-worker-logged-in-password"] = $passwordUnhashed;
-                alert("Profile Successfuly Edited","barangay health worker/profile.php");
-              }
-              else{
-                alert("There was an error try again","barangay health worker/profile.php");
-              }
-            }
-            
-          }else {
-            alert("File is too big","barangay health worker/profile.php");
+          if($editProfile){
+            session_start();
+            $_SESSION["bhw-logged-in-user"] = $editedUserName;
+            $_SESSION["bhw-logged-in-password"] = $passwordUnhashed;
+            alert("Profile Successfuly Edited","barangay health worker/profile.php");
           }
+          else{
+            alert("There was an error try again","barangay health worker/profile.php");
+          }
+        }else{
+          $fileExt = explode('.', $fileName);
+          $fileActualExt = strtolower(end($fileExt));
 
-        }else {
-          alert("There was an error uploading your file","barangay health worker/profile.php");
-        }
+          $allowed = array('jpg', 'jpeg', 'png');
+
+          if (in_array($fileActualExt, $allowed)) {
+
+            if ($fileError === 0) {
+              if($fileSize < 100000000) {
+                $selectUser = $sqlConn->query("SELECT * FROM users WHERE user_id='$profile_id' LIMIT 1");
+                $rowImg = $selectUser->fetch_assoc();
+                if(!empty($rowImg['profile_img'])){
+                  $deleteImgDestination = "user_profile_img/".$rowImg['profile_img'];
+                  unlink($deleteImgDestination);
+                }
+                
+                
+
+              
+                  $fileNameNew = uniqid('', true).".".$fileActualExt;
+                  $fileDestination = 'user_profile_img/'.$fileNameNew;
+                  move_uploaded_file($fileTmpName, $fileDestination);
+
+                
+                  $editProfile = $sqlConn->query("UPDATE users SET first_name='$first_name',middle_name='$middle_name',last_name='$last_name',dob='$dob',age='$age',gender='$gender',user_name='$user_name',password='$password', profile_img='$fileNameNew' WHERE user_id='$profile_id'");
+
+
+
+                  if($editProfile){
+                    session_start();
+                    $_SESSION["bhw-logged-in-user"] = $editedUserName;
+                    $_SESSION["bhw-logged-in-password"] = $passwordUnhashed;
+                    alert("Profile Successfuly Edited","barangay health worker/profile.php");
+                  }
+                  else{
+                    alert("There was an error try again","barangay health worker/profile.php");
+                  }
+                }
+                
+              }else {
+                alert("File is too big","barangay health worker/profile.php");
+              }
+
+            }else {
+              alert("There was an error uploading your file","barangay health worker/profile.php");
+            }
+          }
+          
       }
-      
+    
+    }
+    
+    
+
+
   }
 
+
+  
+
+  
 }
 /* BHW */
 elseif(isset($_POST['admin_log_out'])){
@@ -680,9 +1060,22 @@ elseif(isset($_POST['add_immunization_nurse'])){
   $remarks = $_POST['remarks'];
 
   $date_recorded = date('Y-m-d');
+  $first_dose_schedule = $date_recorded;
+
+  if($doses == 1){
+    $second_dose_schedule = "Not Applicable";
+    $third_dose_schedule = "Not Applicable";
+  }elseif($doses == 2){
+    $second_dose_schedule = "";
+    $third_dose_schedule = "Not Applicable";
+  }
+  else{
+    $second_dose_schedule = "";
+    $third_dose_schedule = "";
+  }
 
 
-  $addImmunization = $sqlConn->query("INSERT INTO immunization(immunization_category_id, vaccine_category_id, vaccine_id,first_name,middle_name,last_name,age,dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received, remarks, date_recorded) VALUES($immunization_category_id,$vaccine_category_id,$vaccine_id,'$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$remarks','$date_recorded')");
+  $addImmunization = $sqlConn->query("INSERT INTO immunization(immunization_category_id, vaccine_category_id, vaccine_id,first_name,middle_name,last_name,age,dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received,first_dose_schedule,second_dose_schedule,third_dose_schedule, remarks, date_recorded) VALUES($immunization_category_id,$vaccine_category_id,$vaccine_id,'$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$first_dose_schedule','$second_dose_schedule','$third_dose_schedule','$remarks','$date_recorded')");
 
   if($addImmunization){
     if($_POST['immunization_category_id'] == 1){
@@ -743,11 +1136,16 @@ elseif(isset($_POST['archive_immunization_nurse'])){
   $vaccine = $_POST['vaccine'];
   $doses = $_POST['doses'];
   $doses_received = $_POST['doses_received'];
+  
+  $first_dose_schedule = $_POST['first_dose_schedule'];
+  $second_dose_schedule = $_POST['second_dose_schedule'];
+  $third_dose_schedule = $_POST['third_dose_schedule'];
+
   $remarks = $_POST['remarks'];
   $date_recorded =  $_POST['date_recorded'];
 
 
- $insertToArchive = $sqlConn->query("INSERT INTO archive(immunization_category_id, immunization_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received, remarks, date_recorded) VALUES ('$immunization_category_id','$archive_immunization_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$remarks','$date_recorded')");
+ $insertToArchive = $sqlConn->query("INSERT INTO archive(immunization_category_id, immunization_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received,first_dose_schedule,second_dose_schedule,third_dose_schedule, remarks, date_recorded) VALUES ('$immunization_category_id','$archive_immunization_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$first_dose_schedule','$second_dose_schedule','$third_dose_schedule','$remarks','$date_recorded')");
 
  if($insertToArchive){
   $deleteImmunization = $sqlConn->query("DELETE FROM immunization WHERE immunization_id='$archive_immunization_id'");
@@ -814,11 +1212,32 @@ elseif(isset($_POST['unarchive_immunization_nurse'])){
   $vaccine = $_POST['vaccine'];
   $doses = $_POST['doses'];
   $doses_received = $_POST['doses_received'];
+  $first_dose_schedule = $_POST['first_dose_schedule'];
+  $second_dose_schedule = $_POST['second_dose_schedule'];
+  $third_dose_schedule = $_POST['third_dose_schedule'];
   $remarks = $_POST['remarks'];
   $date_recorded =  $_POST['date_recorded'];
 
+  if($doses == 1){
+    $second_dose_schedule = "Not Applicable";
+    $third_dose_schedule = "Not Applicable";
+  }elseif($doses == 2 && $doses_received==1){
+    $second_dose_schedule = "";
+    $third_dose_schedule = "Not Applicable";
+  }
+  elseif($doses == 2 && $doses_received==2){
+    $third_dose_schedule = "Not Applicable";
 
- $insertToImmunization = $sqlConn->query("INSERT INTO immunization(immunization_id,immunization_category_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received, remarks, date_recorded) VALUES ('$immunization_id','$immunization_category_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$remarks','$date_recorded')");
+  }elseif($doses == 3 && $doses_received==1){
+    $second_dose_schedule = "";
+    $third_dose_schedule = "";
+  }
+  elseif($doses == 3 && $doses_received==2){
+    $third_dose_schedule = "";
+  }
+
+
+ $insertToImmunization = $sqlConn->query("INSERT INTO immunization(immunization_id,immunization_category_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received,first_dose_schedule,second_dose_schedule,third_dose_schedule, remarks, date_recorded) VALUES ('$immunization_id','$immunization_category_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$first_dose_schedule','$second_dose_schedule','$third_dose_schedule','$remarks','$date_recorded')");
 
  if($insertToImmunization){
     $deleteArchiveImmunization = $sqlConn->query("DELETE FROM archive WHERE archive_id='$archive_id'");
@@ -827,8 +1246,8 @@ elseif(isset($_POST['unarchive_immunization_nurse'])){
  else{
   alert("Unable to move immunization in Archive","nurse/archive.php");
  }
- 
 }
+
 
 elseif(isset($_POST['delete_immunization_nurse'])){
   $archive_id = $_POST['archive_id'];
@@ -876,12 +1295,23 @@ elseif(isset($_POST['add_immunization_bhw'])){
   $remarks = $_POST['remarks'];
 
   $date_recorded = date('Y-m-d');
+  $first_dose_schedule = $date_recorded;
+
+  if($doses == 1){
+    $second_dose_schedule = "Not Applicable";
+    $third_dose_schedule = "Not Applicable";
+  }elseif($doses == 2){
+    $second_dose_schedule = "";
+    $third_dose_schedule = "Not Applicable";
+  }
+  else{
+    $second_dose_schedule = "";
+    $third_dose_schedule = "";
+  }
 
 
-
-
-  $addImmunization = $sqlConn->query("INSERT INTO immunization(immunization_category_id, vaccine_category_id, vaccine_id,first_name,middle_name,last_name,age,dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received, remarks, date_recorded) VALUES($immunization_category_id,$vaccine_category_id,$vaccine_id,'$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$remarks','$date_recorded')");
-
+  $addImmunization = $sqlConn->query("INSERT INTO immunization(immunization_category_id, vaccine_category_id, vaccine_id,first_name,middle_name,last_name,age,dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received,first_dose_schedule,second_dose_schedule,third_dose_schedule, remarks, date_recorded) VALUES($immunization_category_id,$vaccine_category_id,$vaccine_id,'$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$first_dose_schedule','$second_dose_schedule','$third_dose_schedule','$remarks','$date_recorded')");
+  
   if($addImmunization){
     if($_POST['immunization_category_id'] == 1){
       alert("Immunization Added Successfully","barangay health worker/infant_immunization.php");
@@ -944,11 +1374,15 @@ elseif(isset($_POST['archive_immunization_bhw'])){
   $vaccine = $_POST['vaccine'];
   $doses = $_POST['doses'];
   $doses_received = $_POST['doses_received'];
+  
+  $first_dose_schedule = $_POST['first_dose_schedule'];
+  $second_dose_schedule = $_POST['second_dose_schedule'];
+  $third_dose_schedule = $_POST['third_dose_schedule'];
   $remarks = $_POST['remarks'];
   $date_recorded =  $_POST['date_recorded'];
 
 
- $insertToArchive = $sqlConn->query("INSERT INTO archive(immunization_category_id, immunization_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received, remarks, date_recorded) VALUES ('$immunization_category_id','$archive_immunization_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$remarks','$date_recorded')");
+ $insertToArchive = $sqlConn->query("INSERT INTO archive(immunization_category_id, immunization_id, vaccine_category_id, vaccine_id, first_name, middle_name, last_name, age, dob, pob, address, contact_no, m_full_name, f_full_name, weight, height, sex, vaccine, doses, doses_received,first_dose_schedule,second_dose_schedule,third_dose_schedule, remarks, date_recorded) VALUES ('$immunization_category_id','$archive_immunization_id','$vaccine_category_id','$vaccine_id','$patient_first_name','$patient_middle_name','$patient_last_name','$age','$dob','$pob','$address','$contact_no','$m_full_name','$f_full_name','$weight','$height','$sex','$vaccine','$doses','$doses_received','$first_dose_schedule','$second_dose_schedule','$third_dose_schedule','$remarks','$date_recorded')");
 
  if($insertToArchive){
     $deleteImmunization = $sqlConn->query("DELETE FROM immunization WHERE immunization_id='$archive_immunization_id'");
@@ -1048,7 +1482,7 @@ elseif(isset($_POST['backup_database_admin'])){
   $entered_password = $_POST['entered_password'];
 
   $mysqlUserName      = "root";
-  $mysqlPassword      = "";
+  $mysqlPassword      = "jl04232001";
   $mysqlHostName      = "localhost";
   $DbName             = "e_turok";
   $backup_name        =  $db_name;
@@ -1074,7 +1508,7 @@ elseif(isset($_POST['backup_database_nurse'])){
   $entered_password = $_POST['entered_password'];
 
   $mysqlUserName      = "root";
-  $mysqlPassword      = "";
+  $mysqlPassword      = "jl04232001";
   $mysqlHostName      = "localhost";
   $DbName             = "e_turok";
   $backup_name        =  $db_name;
@@ -1270,6 +1704,58 @@ elseif(isset($_POST['export_archive_immunization_as_excel_nurse'])){
   else{
     ExportArchiveImmunizationAsExcel();
   }
+}
+
+elseif(isset($_POST['edit_second_dose'])){
+  $immunization_id = $_POST['immunization_id'];
+  $contact_no = $_POST['contact_no'];
+  $doses_received = $_POST['doses_received'];
+  $second_dose_schedule = $_POST['second_dose_schedule'];
+
+
+  $editImmunization = $sqlConn->query("UPDATE immunization SET contact_no='$contact_no', doses_received='$doses_received', second_dose_schedule='$second_dose_schedule' WHERE immunization_id='$immunization_id';");
+
+  if($editImmunization){
+    alert("Immunization Successfully Edited","nurse/second_dose.php");
+  }
+  else{
+    alert("Immunization Failed to Edit","nurse/second_dose.php");
+  }
+}
+
+elseif(isset($_POST['edit_third_dose'])){
+  $immunization_id = $_POST['immunization_id'];
+  $contact_no = $_POST['contact_no'];
+  $doses_received = $_POST['doses_received'];
+  $third_dose_schedule = $_POST['third_dose_schedule'];
+
+
+  $editImmunization = $sqlConn->query("UPDATE immunization SET contact_no='$contact_no', doses_received='$doses_received', third_dose_schedule='$third_dose_schedule' WHERE immunization_id='$immunization_id';");
+
+  if($editImmunization){
+    alert("Immunization Successfully Edited","nurse/third_dose.php");
+  }
+  else{
+    alert("Immunization Failed to Edit","nurse/third_dose.php");
+  }
+}
+
+if(isset($_POST['send_sms'])){
+  $email="johnlloydlacadin42301@gmail.com";
+  $number = $_POST['contact_no'];
+  $enteredMsg =  $_POST['message'];
+  $api = "TR-JOHNL798144_SAW9J";
+  $apiPassword = "jl04232001";
+  $msg = $enteredMsg;
+
+  $result = itexmo($email,$apiPassword,$number,$msg,$api);
+  if ($result){
+    alert("Message Sent","nurse/second_dose.php");
+  }
+  else{
+    alert("Message not Sent","nurse/second_dose.php");
+  }
+
 }
 
 

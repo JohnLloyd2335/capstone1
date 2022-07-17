@@ -398,6 +398,13 @@ $activeUserCategory = $array['activeUserCategory'];
                                 <input type="password" class="form-control" id="exampleFormControlFile1" name="password" required>
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="exampleFormControlFile1">Confirm Password</label>
+                                <input type="password" name="confirm_password" class="form-control" id="exampleFormControlFile1" required>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

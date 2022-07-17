@@ -1,9 +1,9 @@
 <?php 
 $dbHost = "localhost";
 $dbUser= "root";
-$dbPassword="";
+$dbPassword="jl04232001";
 $dbName = "e_turok";
 
-$sqlConn = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbName);
+$sqlConn = mysqli_connect($dbHost,$dbUser,$dbPassword,$dbName,);
 
 ?>

@@ -644,7 +644,19 @@ function ExportArchiveImmunizationAsExcel(){
     $SeniorDec2022Rows = $SeniorqueryDec2022->num_rows;
     //
 
-
+    function itexmo($email,$password,$number,$message,$apicode)
+    {
+        $ch = curl_init();
+        $recipient = array();
+        array_push($recipient, $number);
+        $itexmo = array('Email' => $email,  'Password' => $password, 'ApiCode' => $apicode,'Recipients' => $recipient, 'Message' => $message);
+        curl_setopt($ch, CURLOPT_URL,"https://api.itexmo.com/api/broadcast");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query($itexmo));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        return curl_exec ($ch);
+        curl_close ($ch); 
+    }
     
 
 

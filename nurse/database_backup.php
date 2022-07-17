@@ -92,7 +92,7 @@ $VaccineCategoryRows = $selectAllVaccineCategory->num_rows;
         <button class="dropdown-btn">
           <i class="fa fa-shield"></i>
           <span class="links_name">Immunization</span>
-          <i class="fa fa-caret-down ml-4"></i>
+          <i class="fas fa-caret-down ml-3"></i>
         </button>
 
 
@@ -116,6 +116,24 @@ $VaccineCategoryRows = $selectAllVaccineCategory->num_rows;
           <a href="senior_citizen_immunization.php">
             <i class="fas fa-hat-cowboy-side"></i>
             <span class="links_name">Senior Citizen</span>
+          </a>
+        </div>
+
+        <button class="dropdown-btn">
+          <i class="fas fa-calendar-alt"></i>
+          <span class="links_name mr-4">Doses</span>
+          <i class="fa fa-caret-down ml-5"></i>
+        </button>
+
+
+        <div class="dropdown-container">
+          <a href="second_dose.php">
+            <i class="far fa-calendar-plus"></i>
+            <span class="links_name">Second Dose</span>
+          </a>
+          <a href="third_dose.php">
+            <i class="far fa-calendar-plus"></i>
+            <span class="links_name">Third Dose</span>
           </a>
         </div>
 
@@ -211,10 +229,44 @@ $VaccineCategoryRows = $selectAllVaccineCategory->num_rows;
         <input type="text" placeholder="Search...">
         <i class='bx bx-search' ></i>
       </div> -->
-      <div class="profile-details d-flex justify-content-end pr-5">
+      <div class="profile-details d-flex justify-content-between  px-5" style="cursor: pointer;">
         <!-- <img src="images/profile.jpg" alt="">
         <span class="admin_name"><?php  ?></span>
         <i class='bx bx-chevron-down' ></i> -->
+        <div class="dropdown">
+        <?php 
+        date_default_timezone_set('Asia/Manila');
+        $month_now = date("m");
+        $selectExpiration =$sqlConn->query("SELECT * FROM vaccine WHERE MONTH(expiration_date)=$month_now ORDER BY expiration_date ASC");
+        if($selectExpiration->num_rows > 0){
+          $notification_class = "fas fa-bell text-danger";
+        }
+        else{
+          $notification_class = "fas fa-bell text-dark";
+        }
+        ?>
+        <i class="<?php echo $notification_class; ?>"  id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <?php 
+          date_default_timezone_set('Asia/Manila');
+          $month_now = date("m");
+          $selectExpiration =$sqlConn->query("SELECT * FROM vaccine WHERE MONTH(expiration_date)=$month_now ORDER BY expiration_date ASC");
+          while($row = $selectExpiration->fetch_assoc()):?>
+            <a class="text-light font-weight-bold h6 dropdown-item bg bg-primary" href="vaccine.php">
+              <?php echo $row['vaccine_name']; ?>
+              <p class="text-danger font-weight-bold">
+                <?php 
+                $expiration_date = $row['expiration_date'];
+                $date = date('F-d-Y',strtotime($expiration_date));
+                echo "Expiration date: ".$date; 
+                ?>
+              </p>
+          </a>
+          <?php endwhile;?>
+        </div>
+      </div>      
+
+
         <div class="dropdown">
           <?php 
           if(empty($activeUserImg)){

@@ -414,10 +414,7 @@ $activeUserCategory = $array['activeUserCategory'];
                         <input type="text" class="form-control" id="exampleFormControlFile1"  value="<?php echo $activeUserName?>" required name="user_name">
                       </div>
 
-                      <div class="col">
-                        <label for="exampleFormControlFile1">Password</label>
-                        <input type="password" class="form-control" id="exampleFormControlFile1"  value="<?php echo $_SESSION["bhw-logged-in-password"];?>" name="password">
-                      </div>
+                      
 
                       <div class="col">
                         <label for="exampleFormControlFile1">User Category</label>
@@ -428,6 +425,31 @@ $activeUserCategory = $array['activeUserCategory'];
                   
                       
                   </div>
+                  <h5 class="font-weight-light">Password <small class="text-muted">optional</small></h5>
+                  <div class="row mb-2">
+                  
+
+                      <div class="col">
+                        <input type="hidden" name="correct_password" value="<?php echo $_SESSION["bhw-logged-in-password"]; ?>">
+                        <label for="exampleFormControlFile1">Old Password</label>
+                        <input type="password" name="old_password" class="form-control" id="exampleFormControlFile1"   >
+                        
+                      </div>
+
+                      <div class="col">
+                        <label for="exampleFormControlFile1">New Password</label>
+                        <input type="password" name="new_password" class="form-control" id="exampleFormControlFile1"   >
+                        
+                      </div>
+
+                      <div class="col">
+                        <label for="exampleFormControlFile1">Confirm Password</label>
+                        <input type="password" name="confirm_password" class="form-control" id="exampleFormControlFile1"   >
+                        
+                      </div>
+
+                  </div>
+
               </div>
 
                 

@@ -793,6 +793,10 @@ $activeUserCategory = $array['activeUserCategory'];
                               <input type="hidden" name="vaccine" value="<?php echo $row['vaccine'] ?>">
                        
                         <input type="hidden" name="doses" value="<?php echo $row['doses'] ?>" class="form-control" readonly>
+
+                        <input type="text" name="first_dose_schedule" value ="<?php echo $row['first_dose_schedule']; ?>">
+                        <input type="hidden" name="second_dose_schedule" value ="<?php echo $row['second_dose_schedule']; ?>">
+                        <input type="hidden" name="third_dose_schedule" value ="<?php echo $row['third_dose_schedule']; ?>">
                       
                         <input type="hidden" name="doses_received" value="<?php echo $row['doses_received'] ?>" class="form-control" readonly>
                         
