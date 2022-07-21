@@ -2,8 +2,18 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
 }
-
+.main-container{
+    background-color: #4fd6f7;
+    
+}
+.card{
+    border-radius: 15%;
+}
+.row {
+    margin-left: 20px;
+}
 
 .text-center img {
     width: 20px;
@@ -13,4 +23,34 @@
 .text-center {
     font-weight:600;
 }
+.text-center p {
+    margin-top: 20px;
+    color:#0583d2;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+}
+.text-center h2 {
+    color:#0583d2;
+}
+.col h4 {
+    color: white;
+}
+.container-fluid {
+    background-color: #0583d2;
+}
+.container-fluid .row {
+    margin: 5px;
+}
+.container-fluid .row ml-2 {
+    color: orange;
+}
+button{
+    color: white;
+}
+footer{
+    bottom: 0%;
+    background-color: #7fe2fa;
+}
+
+
 

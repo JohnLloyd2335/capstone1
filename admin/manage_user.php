@@ -660,7 +660,7 @@ $activeUserCategory = $array['activeUserCategory'];
                                   <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                   <?php $i++; 
                                   } ?>
-                                <option selected disabled value="<?php echo $row['age']; ?>"><?php echo $row['age'] ?></option>
+                                <option selected value="<?php echo $row['age']; ?>"><?php echo $row['age'] ?></option>
                                 </select>
                                 <script>
                                   $(document).ready(function() {

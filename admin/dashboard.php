@@ -271,7 +271,7 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
           </div>
           <i class="fa fa-shield cart ml-4"></i>
         </div>
-        <div class="box bg-dark text-light ">
+        <div class="box  text-light " style="background-color:#1e80c1">
           <div class="right-side">
             <div class="box-topic">Users</div>
             <div class="number"><?php echo $UsersRows; ?></div>
@@ -282,7 +282,7 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
           </div>
           <i class="fas fa-users cart ml-4"></i>
         </div>
-        <div class="box bg-secondary text-light ">
+        <div class="box  text-light " style="background-color:#0fa0b0">
           <div class="right-side">
             <div class="box-topic">Doses Completed</div>
             <div class="number"><?php echo strval($dosesCompleted); ?></div>
@@ -298,9 +298,14 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
       <div class="container-fluid p-2 d-flex flex-wrap  h-100 w-100 align-items-center justify-content-center">
             <div class="row h-100 w-100">
               <div class="col-md-12 h-100 w-100">
-                <span id="monthlyImmunization" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;">
+                <div class="card" style="border-radius:15px; border-color:#0583d2;">
+                <div class="card-title"style="margin:5px; margin-top:10px; padding-left:20px; font-size:24px; font-weight:bold; color: #0583d2">Monthly Immunization</div>
+                <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div> 
+                <div id="monthlyImmunization" class="bigchart"style="width: 90%; height: 100%; display:flex; align-items: center; justify-content: center; font-weight:bold;">
 
-                </span>
+        </div>
+        </div>
+        
               </div>
             </div>
       </div>
@@ -308,10 +313,18 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
       <div class="container-fluid p-2 d-flex flex-wrap  h-100 w-100 align-items-center justify-content-center">
           <div class="row h-100 w-100 ">
             <div class="col  w-100 h-100 ">
-                <span id="immunizationCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
+              <div class="card"style="border-radius:15px; border-color:#0583d2;">
+              <div class="card-title" style="margin:5px; font-weight:bold; color:#0583d2; font-size:18px; margin-top:10px; padding-left:20px;">Category of Immunization</div>
+              <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div>  
+              <span id="immunizationCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
+            </div>
             </div>
             <div class="col w-100 h-100 ">
+              <div class="card"style="border-radius:15px; border-color:#0583d2;">
+              <div class="card-title" style="margin:5px; font-weight:bold; color:#0583d2; font-size:18px; margin-top:10px; padding-left:20px;">Category Of Vaccine</div>
+              <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div> 
               <span id="vaccineCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
+            </div>
             </div>
           </div>
       </div> 
@@ -403,7 +416,7 @@ function drawChart() {
     ['Senior Citizen',    <?php echo $seniorImmunizationRows ?>]
   ]);
 
-  var options = {'title':'Immunization Category',
+  var options = {'title':'',
                       'is3D':true,
                      'width':500,
                      'height':400};
@@ -449,7 +462,7 @@ function drawChart() {
   ]);
 
   var options = {
-    title: 'Vaccine Category',
+    title: '',
                      'width':500,
                      'is3D':true,
                      'height':400
@@ -461,6 +474,7 @@ function drawChart() {
 }
 </script>
 
+  
 <script type="text/javascript">
       google.charts.load('current', {'packages':['bar']});
       google.charts.setOnLoadCallback(drawChart);
@@ -481,13 +495,13 @@ function drawChart() {
           ['November 2022', <?php echo $InfantNov2022Rows; ?>, <?php echo $SchoolAgedChildrenNov2022Rows; ?>, <?php echo $PregnantNov2022Rows; ?>, <?php echo $AdultNov2022Rows; ?>, <?php echo $SeniorNov2022Rows; ?>],
           ['December 2022', <?php echo $InfantDec2022Rows; ?>, <?php echo $SchoolAgedChildrenDec2022Rows; ?>, <?php echo $PregnantDec2022Rows; ?>, <?php echo $AdultDec2022Rows; ?>, <?php echo $SeniorDec2022Rows; ?>]
         ]);
-
+        
         var options = {
-          width:1000, height: 500,
+          width:1000, height: 500, 
           chart: {
-            title: 'Monthly Immunization',
+            title: '', 
             
-            subtitle: 'Infant, School Aged Children, Pregnant, Adult, Senior Citizen',
+            subtitle: '',
 
           },
           bars: 'horizontal' // Required for Material Bar Charts.
@@ -498,6 +512,7 @@ function drawChart() {
         chart.draw(data, google.charts.Bar.convertOptions(options));
       }
     </script>
+   
 <!-- Graphs and Charts -->
 
 <script>

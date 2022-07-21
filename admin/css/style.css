@@ -11,7 +11,7 @@
   height: 100%;
   width: 240px;
   background: 
-  #1034a6;
+  #0583d2;
   transition: all 0.5s ease;
 }
 .sidebar.active{
@@ -51,13 +51,13 @@
   transition: all 0.4s ease;
 }
 .sidebar .nav-links li a.active{
-  background: #0080ff;
+  background: #081D45;
 }
 .active{
-  background: #0080ff;
+  background: #081D45;
 }
 .sidebar .nav-links li a:hover{
-  background: #0080ff;
+  background: #081D45;
 }
 .sidebar .nav-links li i{
   min-width: 60px;
@@ -237,7 +237,7 @@ nav .profile-details i{
   background: #cce5ff;
   line-height: 50px;
   text-align: center;
-  color: #000;
+  color: #0583d2;
   border-radius: 12px;
   margin: -15px 0 0 6px;
 }
@@ -303,7 +303,7 @@ nav .profile-details i{
 }
 .sales-boxes .box .button a{
   color: #fff;
-  background: #0A2558;
+  background: #0583d2;
   padding: 4px 12px;
   font-size: 15px;
   font-weight: 400;
@@ -359,12 +359,12 @@ nav .profile-details i{
   transition: all 0.4s ease;
   cursor: pointer;
   width: 100%;
-  background-color:  #1034a6;
+  background-color:  #0583d2;
   border: none;
   outline: none;
 }
 .dropdown-btn:hover{
-  background-color: #0080ff;
+  background-color: #081D45;
 }
 
 .dropdown-btn:focus{
@@ -391,7 +391,7 @@ padding-left: 40px;
 
 }
 .dropdown-container a:hover{
-background-color: #0080ff;
+background-color: #081D45;
 
 }
 
@@ -425,7 +425,7 @@ font-weight: 400;
 white-space: nowrap;
 }
 .profile-img-background{
-  background-color: #1034a6;
+ background-color:#0583d2;
 }
 
 

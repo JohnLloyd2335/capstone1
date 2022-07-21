@@ -1,3 +1,4 @@
+
 <?php 
 require("../database/database-config.php");
 require_once("../utilities.php");
@@ -263,9 +264,9 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
           $month_now = date("m");
           $selectExpiration =$sqlConn->query("SELECT * FROM vaccine WHERE MONTH(expiration_date)=$month_now ORDER BY expiration_date ASC");
           while($row = $selectExpiration->fetch_assoc()):?>
-            <a class="text-light font-weight-bold h6 dropdown-item bg bg-primary" href="vaccine.php">
+            <a class="text-light font-weight-bold h6 dropdown-item  "style="background-color:#0583d2;" href="vaccine.php">
               <?php echo $row['vaccine_name']; ?>
-              <p class="text-danger font-weight-bold">
+              <p class=" font-weight-bolder text-danger">
                 <?php 
                 $expiration_date = $row['expiration_date'];
                 $date = date('F-d-Y',strtotime($expiration_date));
@@ -299,7 +300,7 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
     </nav>
 
     <div class="main-content">
-    <div class="overview-boxes py-2">
+      <div class="overview-boxes py-2">
         <div class="box bg-info text-light">
           <div class="right-side">
             <div class="box-topic">Vaccine</div>
@@ -321,7 +322,7 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
           </div>
           <i class="fa fa-shield cart ml-4"></i>
         </div>
-        <div class="box bg-dark text-light ">
+        <div class="box  text-light " style="background-color:#1e80c1">
           <div class="right-side">
             <div class="box-topic">Users</div>
             <div class="number"><?php echo $UsersRows; ?></div>
@@ -332,7 +333,7 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
           </div>
           <i class="fas fa-users cart ml-4"></i>
         </div>
-        <div class="box bg-secondary text-light ">
+        <div class="box  text-light " style="background-color:#0fa0b0">
           <div class="right-side">
             <div class="box-topic">Doses Completed</div>
             <div class="number"><?php echo strval($dosesCompleted); ?></div>
@@ -348,9 +349,13 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
       <div class="container-fluid p-2 d-flex flex-wrap  h-100 w-100 align-items-center justify-content-center">
             <div class="row h-100 w-100">
               <div class="col-md-12 h-100 w-100">
-                <span id="monthlyImmunization" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;">
+                <div class="card"style="border-radius:15px; border-color:#0583d2;">
+                <div class="card-title" style="margin:5px; font-weight:bold; color:#0583d2; font-size:18px; margin-top:10px; padding-left:20px;">Monthly Immunization</div>
+                <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div>  
+                <span id="monthlyImmunization" class="bigchart" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center; font-weight: bold;">
 
                 </span>
+              </div>
               </div>
             </div>
       </div>
@@ -358,13 +363,23 @@ $dosesCompleted = $Doses1Completed  + $Doses2Completed + $Doses3Completed;
       <div class="container-fluid p-2 d-flex flex-wrap  h-100 w-100 align-items-center justify-content-center">
           <div class="row h-100 w-100 ">
             <div class="col  w-100 h-100 ">
-                <span id="immunizationCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
+              <div class="card"style="border-radius:15px; border-color:#0583d2;">
+              <div class="card-title" style="margin:5px; font-weight:bold; color:#0583d2; font-size:18px; margin-top:10px; padding-left:20px;">Category of Immunization</div>
+              <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div>  
+              <span id="immunizationCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
+            </div>
             </div>
             <div class="col w-100 h-100 ">
+              <div class="card"style="border-radius:15px; border-color:#0583d2;">
+              <div class="card-title" style="margin:5px; font-weight:bold; color:#0583d2; font-size:18px; margin-top:10px; padding-left:20px;">Category Of Vaccine</div>
+              <div class="line"style="height:2px; background-color:#0583d2; width:100%;" ></div> 
               <span id="vaccineCategory" style="width: 100%; height: 100%; display:flex; align-items: center; justify-content: center;"></span>
             </div>
+            </div>
           </div>
-      </div> 
+      </div>
+            
+
     </div>
   </section>
 
@@ -451,7 +466,7 @@ function drawChart() {
     ['Senior Citizen',    <?php echo $seniorImmunizationRows ?>]
   ]);
 
-  var options = {'title':'Immunization Category',
+  var options = {'title':'',
                       'is3D':true,
                      'width':500,
                      'height':400};
@@ -497,7 +512,7 @@ function drawChart() {
   ]);
 
   var options = {
-    title: 'Vaccine Category',
+    title: '',
                      'width':500,
                      'is3D':true,
                      'height':400
@@ -533,9 +548,9 @@ function drawChart() {
         var options = {
           width:1000, height: 500,
           chart: {
-            title: 'Monthly Immunization',
+            title: '',
             
-            subtitle: 'Infant, School Aged Children, Pregnant, Adult, Senior Citizen',
+            subtitle: '',
 
           },
           bars: 'horizontal' // Required for Material Bar Charts.

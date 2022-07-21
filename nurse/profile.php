@@ -372,7 +372,7 @@ $activeUserCategory = $array['activeUserCategory'];
               <div class="container-fluid text-center p-2 rounded-top bg-dark text-white">
                   <div class="row ">
                     <div class="col">
-                      <img src="<?php echo $activeUserImg; ?>" alt="" height="150px" width="150px" class="border border-primary rounded-circle border-5">
+                      <img src="<?php echo $activeUserImg; ?>" alt="" height="150" width="150" class="border border-primary rounded-circle border-5">
                     </div>
                   </div>
 

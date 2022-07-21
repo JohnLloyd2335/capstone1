@@ -54,37 +54,38 @@ if (isset($_POST['login'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css ?v=<?php echo time(); ?>">
     <title>LOGIN | E-TUROK</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- <link rel="stylesheet" href="style.css"> -->
     
 </head>
 <body>
-  <div class="container-fluid h-20 w-100 bg-dark py-1">
+  <div class="container-fluid h-20 w-100 py-1 ">
     <div class="row">
       <div class="col ml-5 d-flex align-items-center">
-          <img src="images/pila_logo.png" alt="" height="50" width="50">
-          <h4 class="ml-2 text-white">Rural Health Unit of Pila Lagua</h4>
+          <img src="images/pila_logo.png" alt="" height="75" width="75">
+          <h4 class="ml-4 ">Rural Health Unit of Pila Laguna</h4>
       </div>
 
       <div class="col d-flex align-items-center justify-content-end pr-5">
-        <h4 class="text-white">E-TUROK MO</h4>
+        <h4 class="">E-TUROK MO</h4>
       </div>
       
     </div>
   </div>
-
+  
     <div class="main-container">
         <div class="container">
-          
-            <section class="h-90 gradient-form" style="background-color:white;">
+            <section class="h-90 gradient-form">
                 <div class="container py-5 h-90">
                   <div class="row d-flex justify-content-center align-items-center h-100">
                     <div class="col-xl">
                       <div class="card rounded-3 text-black">
                         <div class="row g-0 ">
                           
-                            <div class="col-lg-6 d-flex align-items-center justify-content-center" style="background-color:#1034a6;"> <!--  gradient-custom-2"> -->
+                          
+                            <div class="col-lg-6 d-flex align-items-center justify-content-center" style="background-image: url(rhubg.jpg)" alt=""width="100" height="100"> <!--  gradient-custom-2"> -->
                             <!-- <div class="text-white px-3 py-4 p-md-5 mx-md-4">
                               <h4 class="mb-4">We are more than just a company</h4>
                               <p class="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
@@ -92,12 +93,8 @@ if (isset($_POST['login'])) {
                                 exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                             </div> -->
                             
-                            <div class="col-lg-6   align-items-center justify-content-center d-flex flex-wrap" id="square-left" style="color: white;">
-                                <div class="row  align-items-center justify-content-center">
-                                  
-                                    <h1>Welcome!</h1>
-                                    <br>
-                                    <p>Please Sign in to Access</p>
+                            <div class="col-lg-6   align-items-center justify-content-center"  style="color: white;">
+                                <div class="row  align-items-left justify-content-left">
 
                                 </div>
                             </div>
@@ -109,7 +106,8 @@ if (isset($_POST['login'])) {
                               <div class="text-center">
                                 <img src="images/pila_logo.png"
                                   style="width: 100px;" alt="logo">
-                                <p class="mt-1 mb-5 pb-1 text-muted">Rural Health Unit of Pila Laguna</p>
+                                <p class="pb-1 ">Rural Health Unit of Pila Laguna</p>
+                                <h2 class="pb-1 ">Welcome</h2>
                               </div>
               
                               <form action="index.php" method="POST">
@@ -127,8 +125,8 @@ if (isset($_POST['login'])) {
                                 </div>
               
                                 <div class="text-center pt-1 mb-5 pb-1">
-                                  <button class="btn btn-primary btn-block fa-lg mb-3" name="login" type="submit" style="background-color:#1034a6;">Log
-                                    in</button>
+                                  <button class="btn btn-block fa-lg mb-3" name="login" type="submit" style="background-color:#0583d2;">LOGIN
+                                    </button>
                                   <!-- <a class="text-muted" href="#!">Forgot password?</a> -->
                                 </div>
               
@@ -146,82 +144,13 @@ if (isset($_POST['login'])) {
                   </div>
                 </div>
               </section>
-        </div>
+        
         <!-- Footer -->
-<footer class="text-center text-lg-start text-muted bg-dark" >
-  <!-- Section: Social media -->
-  <section
-    class="d-flex justify-content-center justify-content-lg-between p-2 "
-  >
-
-    <!-- Right -->
-  </section>
-
-  <!-- Section: Links  -->
-  <section class="">
-    <div class="container text-center text-md-start mt-5 ">
-      <!-- Grid row -->
-      <div class="row mt-3">
-        <!-- Grid column -->
-        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-          <!-- Content -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            <i class="fas fa-gem me-3"></i>Rural Health Unit of Pila Laguna
-          </h6>
-          <p>
-            E - TUROK MO- A Vaccine Data Record and Information Management System for the Rural Health Unit  of Pila Laguna with SMS Notification
-          </p>
         </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
-        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Social Media Account
-          </h6>
-          <p>
-            <a href="#!" class="text-reset">Facebook</a>
-          </p>
-        </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
-        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Learn More
-          </h6>
-          <p>
-            <a href="#!" class="text-reset">About</a>
-          </p>
-        </div>
-        <!-- Grid column -->
-
-        <!-- Grid column -->
-        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Contact
-          </h6>
-          <p><i class="fas fa-home me-3"></i> </p>
-          <p>
-            <i class="fas fa-envelope me-3"></i>
-            
-          </p>
-          <p><i class="fas fa-phone me-3"></i>Mobile: 00000000000</p>
-          <p><i class="fas fa-print me-3"></i>Land Line: 00000000</p>
-        </div>
-        <!-- Grid column -->
-      </div>
-      <!-- Grid row -->
-    </div>
-  </section>
-  <!-- Section: Links  -->
-
+<footer class="text-center text-lg-start"> 
   <!-- Copyright -->
-  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-    RHU Pila
+  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);"> <br>
+    <p>The system is belongs to the Rural Health Unit of Pila Laguna only. </p>
     <!-- <a class="text-reset fw-bold" href="https://mdbootstrap.com/">MDBootstrap.com</a> -->
   </div>
   <!-- Copyright -->

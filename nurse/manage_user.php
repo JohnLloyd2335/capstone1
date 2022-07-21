@@ -711,7 +711,7 @@ $activeUserCategory = $array['activeUserCategory'];
                                   <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
                                   <?php $i++; 
                                   } ?>
-                                <option selected disabled value="<?php echo $row['age']; ?>"><?php echo $row['age'] ?></option>
+                                <option selected value="<?php echo $row['age']; ?>"><?php echo $row['age'] ?></option>
                                 </select>
                                 <script>
                                   $(document).ready(function() {
@@ -754,7 +754,7 @@ $activeUserCategory = $array['activeUserCategory'];
                 
                       <div class="col">
                         <label for="exampleFormControlFile1">Username</label>
-                        <input type="text" class="form-control" id="exampleFormControlFile1"  value="<?php echo $row['user_name']?>" required>
+                        <input type="text" class="form-control" id="exampleFormControlFile1"  value="<?php echo $row['user_name']?>" required readonly>
                       </div>
 
                       <div class="col">
